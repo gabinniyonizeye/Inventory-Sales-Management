@@ -1,0 +1,12 @@
+[Bb]in/
+[Oo]bj/
+.vs/
+*.user
+*.suo
+appsettings.Development.json
+*.docx
+~$*
+summary_preview/
+*.zip
+
+.build-check/

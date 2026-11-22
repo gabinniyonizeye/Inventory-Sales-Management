@@ -1,0 +1,10 @@
+# Database setup
+
+For a fresh development database, run these files in SSMS in this order: `01_CreateDatabase.sql`, `02_StoredProcedures.sql`, `05_TestUsers.sql`, then `07_UserProcedures.sql`, and optionally `03_SampleData.sql` once. The sample receipt uses the test administrator account. Do not run table creation against existing tables.
+
+For databases created from the earlier string-ID scripts only, back up first and use `06_ConvertExistingUserIds.sql` once; then rerun `02_StoredProcedures.sql`. The conversion maps the old sample receipt placeholder to the test administrator. It stops on other unknown user references.
+
+Users.UserId is an automatically generated integer. Receipts and sales reference Users. The two shared development accounts are admin / AdminTest!2026 and sales / StaffTest!2026. Their passwords are hashed and are public test credentials; do not use them in production. The application uses cookie login and administrator-only user management. Use ASP.NET Core PasswordHasher to verify the stored hashes.
+
+CreatedAt uses the SQL Server local time. Keep local connection settings out of GitHub.
+

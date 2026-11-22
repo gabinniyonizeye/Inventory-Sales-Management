@@ -1,0 +1,20 @@
+@page
+@model InventorySalesManagement.Pages.Users.IndexModel
+@{ ViewData["Title"] = "Users"; }
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div><p class="text-primary text-uppercase fw-semibold small mb-1">Administration</p><h1 class="h2 fw-bold mb-1">Users</h1><p class="text-secondary mb-0">Manage account access and roles.</p></div>
+    <a class="btn btn-primary" asp-page="/Users/Create">+ Add user</a>
+</div>
+@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger" role="alert">@Model.ErrorMessage</div> }
+<div class="card border-0 shadow-sm rounded-4"><div class="card-body p-0">
+    <div class="table-responsive"><table class="table table-hover align-middle mb-0">
+        <thead class="table-light"><tr><th scope="col" class="ps-4">Name</th><th scope="col">Username</th><th scope="col">Role</th><th scope="col">Status</th><th scope="col">Created</th><th scope="col"><span class="visually-hidden">Actions</span></th></tr></thead>
+        <tbody>
+        @foreach (var user in Model.Users)
+        {
+            <tr><td class="ps-4 fw-semibold">@user.FullName</td><td>@user.UserName</td><td>@user.Role</td><td><span class="badge @(user.IsActive ? "text-bg-success" : "text-bg-secondary")">@(user.IsActive ? "Active" : "Inactive")</span></td><td class="text-secondary">@user.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td><td class="text-end pe-4"><a class="btn btn-sm btn-outline-primary" asp-page="/Users/Edit" asp-route-id="@user.UserId">Edit</a></td></tr>
+        }
+        </tbody>
+    </table></div>
+    @if (Model.Users.Count == 0 && string.IsNullOrEmpty(Model.ErrorMessage)) { <p class="text-secondary text-center p-4 mb-0">No users found.</p> }
+</div></div>
