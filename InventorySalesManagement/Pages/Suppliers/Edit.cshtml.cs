@@ -1,3 +1,4 @@
+﻿using Microsoft.AspNetCore.Authorization;
 using System.Data;
 using InventorySalesManagement.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -6,6 +7,7 @@ using Microsoft.Data.SqlClient;
 
 namespace InventorySalesManagement.Pages.Suppliers
 {
+    [Authorize(Roles = "Administrator")]
     public class EditModel : PageModel
     {
         private readonly IConfiguration configuration;
@@ -35,7 +37,11 @@ namespace InventorySalesManagement.Pages.Suppliers
 
         public async Task<IActionResult> OnPostAsync()
         {
-            Supplier.SupplierName = Supplier.SupplierName.Trim();
+            Supplier.SupplierName = (Supplier.SupplierName ?? string.Empty).Trim();
+            if (Supplier.SupplierName.Length == 0)
+            {
+                ModelState.AddModelError("Supplier.SupplierName", "Supplier name is required.");
+            }
             Supplier.Phone = Clean(Supplier.Phone);
             Supplier.Email = Clean(Supplier.Email);
             Supplier.Address = Clean(Supplier.Address);

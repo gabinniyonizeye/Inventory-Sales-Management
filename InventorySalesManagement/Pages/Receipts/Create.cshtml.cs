@@ -1,3 +1,4 @@
+﻿using Microsoft.AspNetCore.Authorization;
 using System.Data;
 using System.Security.Claims;
 using System.Text.Json;
@@ -9,6 +10,7 @@ using Microsoft.Data.SqlClient;
 
 namespace InventorySalesManagement.Pages.Receipts
 {
+    [Authorize(Roles = "Administrator")]
     public class CreateModel : PageModel
     {
         private readonly IConfiguration configuration;
@@ -34,8 +36,7 @@ namespace InventorySalesManagement.Pages.Receipts
             }
             else
             {
-                if (Lines.GroupBy(line => line.ProductId).Any(group => group.Key <= 0 || group.Count() > 1))
-                    ModelState.AddModelError(string.Empty, "Select each product only once per receipt.");
+
                 for (int index = 0; index < Lines.Count; index++)
                 {
                     if (Lines[index].Quantity <= 0)
@@ -43,6 +44,11 @@ namespace InventorySalesManagement.Pages.Receipts
                     if (Lines[index].UnitCost < 0)
                         ModelState.AddModelError($"Lines[{index}].UnitCost", "Purchase cost cannot be negative.");
                 }
+            }
+
+            if (Notes != null && Notes.Length > 250)
+            {
+                ModelState.AddModelError("Notes", "Notes cannot exceed 250 characters.");
             }
 
             if (!ModelState.IsValid)

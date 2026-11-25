@@ -1,4 +1,4 @@
-using System.Data;
+﻿using System.Data;
 using InventorySalesManagement.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -29,6 +29,7 @@ namespace InventorySalesManagement.Pages.Receipts
                     SupplierId = reader.GetInt32(reader.GetOrdinal("SupplierId")),
                     SupplierName = reader.GetString(reader.GetOrdinal("SupplierName")),
                     ReceivedByUserId = reader.GetInt32(reader.GetOrdinal("ReceivedByUserId")),
+                    ReceivedByName = reader.GetString(reader.GetOrdinal("ReceivedByName")),
                     ReceivedAt = reader.GetDateTime(reader.GetOrdinal("ReceivedAt")),
                     Notes = reader.IsDBNull(reader.GetOrdinal("Notes")) ? null : reader.GetString(reader.GetOrdinal("Notes"))
                 };

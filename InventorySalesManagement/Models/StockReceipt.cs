@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace InventorySalesManagement.Models
 {
@@ -8,6 +8,7 @@ namespace InventorySalesManagement.Models
         public int SupplierId { get; set; }
         public string SupplierName { get; set; } = string.Empty;
         public int ReceivedByUserId { get; set; }
+        public string ReceivedByName { get; set; } = string.Empty;
         public DateTime ReceivedAt { get; set; }
 
         [StringLength(250, ErrorMessage = "Notes cannot exceed 250 characters.")]
@@ -21,13 +22,15 @@ namespace InventorySalesManagement.Models
         [Range(1, int.MaxValue, ErrorMessage = "Select a product.")]
         public int ProductId { get; set; }
 
+        [Microsoft.AspNetCore.Mvc.ModelBinding.Validation.ValidateNever]
         public string ProductName { get; set; } = string.Empty;
 
         [Range(1, int.MaxValue, ErrorMessage = "Quantity must be greater than zero.")]
         public int Quantity { get; set; }
 
+        [Required(ErrorMessage = "Purchase cost is required.")]
         [Range(0, double.MaxValue, ErrorMessage = "Purchase cost cannot be negative.")]
-        public decimal UnitCost { get; set; }
+        public decimal? UnitCost { get; set; }
 
         [DataType(DataType.Date)]
         public DateTime? ExpiryDate { get; set; }
