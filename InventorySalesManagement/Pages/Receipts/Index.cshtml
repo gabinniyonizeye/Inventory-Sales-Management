@@ -1,0 +1,17 @@
+@page
+@model InventorySalesManagement.Pages.Receipts.IndexModel
+@{ ViewData["Title"] = "Receipt History"; }
+<h1>Receipt history</h1>
+@if (TempData["SuccessMessage"] != null) { <div class="alert alert-success">@TempData["SuccessMessage"]</div> }
+@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+<p><a asp-page="Create" class="btn btn-primary">Receive stock</a> <a asp-page="/Batches/Index" class="btn btn-outline-secondary">View batches</a></p>
+<table class="table table-striped table-bordered">
+	<thead><tr><th>Receipt</th><th>Supplier</th><th>Received</th><th>Notes</th><th></th></tr></thead>
+	<tbody>
+	@foreach (var receipt in Model.Receipts)
+	{
+		<tr><td>#@receipt.StockReceiptId</td><td>@receipt.SupplierName</td><td>@receipt.ReceivedAt.ToString("g")</td><td>@receipt.Notes</td><td><a asp-page="Details" asp-route-id="@receipt.StockReceiptId" class="btn btn-sm btn-info">Details</a></td></tr>
+	}
+	</tbody>
+</table>
+@if (Model.Receipts.Count == 0) { <p class="text-secondary">No receipts found.</p> }

@@ -1,0 +1,50 @@
+@page
+@model InventorySalesManagement.Pages.Receipts.CreateModel
+@{ ViewData["Title"] = "New Stock Receipt"; }
+<h1>Receive stock</h1>
+@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+@if (Model.Suppliers.Count == 0 || Model.Products.Count == 0)
+{
+	<div class="alert alert-warning">An active supplier and at least one active product are required before receiving stock.</div>
+}
+<form method="post" id="receipt-form">
+	<div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+	<div class="row g-3 mb-4">
+		<div class="col-md-6"><label asp-for="SupplierId" class="form-label">Supplier</label><select asp-for="SupplierId" class="form-select"><option value="">Select supplier</option>@foreach (var supplier in Model.Suppliers) { <option value="@supplier.SupplierId">@supplier.SupplierName</option> }</select><span asp-validation-for="SupplierId" class="text-danger"></span></div>
+		<div class="col-md-6"><label asp-for="Notes" class="form-label">Notes (optional)</label><input asp-for="Notes" class="form-control" placeholder="Delivery reference or notes" /><span asp-validation-for="Notes" class="text-danger"></span></div>
+	</div>
+	<h2 class="h5">Products received</h2>
+	<div id="receipt-lines">
+		@for (int i = 0; i < Model.Lines.Count; i++)
+		{
+			<div class="row g-2 align-items-end receipt-line mb-2">
+				<div class="col-lg-4"><label class="form-label">Product</label><select name="Lines[@i].ProductId" class="form-select product-select"><option value="">Select product</option>@foreach (var product in Model.Products) { <option value="@product.ProductId" selected="@(product.ProductId == Model.Lines[i].ProductId)">@product.ProductName (@product.Unit)</option> }</select></div>
+				<div class="col-md-3 col-lg-2"><label class="form-label">Quantity</label><input name="Lines[@i].Quantity" value="@Model.Lines[i].Quantity" type="number" min="1" class="form-control" /></div>
+				<div class="col-md-3 col-lg-2"><label class="form-label">Purchase cost</label><input name="Lines[@i].UnitCost" value="@Model.Lines[i].UnitCost" type="number" min="0" step="0.01" class="form-control" /></div>
+				<div class="col-md-4 col-lg-3"><label class="form-label">Expiry date (optional)</label><input name="Lines[@i].ExpiryDate" value="@(Model.Lines[i].ExpiryDate?.ToString("yyyy-MM-dd"))" type="date" class="form-control" /></div>
+				<div class="col-lg-1"><button type="button" class="btn btn-outline-danger remove-line">Remove</button></div>
+			</div>
+		}
+	</div>
+	<button type="button" id="add-line" class="btn btn-outline-secondary mb-4">Add product</button>
+	<div><button class="btn btn-primary" @(Model.Suppliers.Count == 0 || Model.Products.Count == 0 ? "disabled" : "")>Save receipt</button> <a asp-page="Index" class="btn btn-link">Cancel</a></div>
+</form>
+@section Scripts {
+	<partial name="_ValidationScriptsPartial" />
+	<script>
+		const productOptions = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Products.Select(p => new { p.ProductId, Name = p.ProductName + " (" + p.Unit + ")" })));
+		const lines = document.getElementById('receipt-lines');
+		function addLine() {
+			const index = lines.querySelectorAll('.receipt-line').length;
+			const options = ['<option value="">Select product</option>'].concat(productOptions.map(p => `<option value="${p.productId}">${p.name}</option>`)).join('');
+			lines.insertAdjacentHTML('beforeend', `<div class="row g-2 align-items-end receipt-line mb-2"><div class="col-lg-4"><label class="form-label">Product</label><select name="Lines[${index}].ProductId" class="form-select product-select">${options}</select></div><div class="col-md-3 col-lg-2"><label class="form-label">Quantity</label><input name="Lines[${index}].Quantity" type="number" min="1" class="form-control" /></div><div class="col-md-3 col-lg-2"><label class="form-label">Purchase cost</label><input name="Lines[${index}].UnitCost" type="number" min="0" step="0.01" class="form-control" /></div><div class="col-md-4 col-lg-3"><label class="form-label">Expiry date (optional)</label><input name="Lines[${index}].ExpiryDate" type="date" class="form-control" /></div><div class="col-lg-1"><button type="button" class="btn btn-outline-danger remove-line">Remove</button></div></div>`);
+		}
+		document.getElementById('add-line').addEventListener('click', addLine);
+		lines.addEventListener('click', event => { if (event.target.classList.contains('remove-line') && lines.querySelectorAll('.receipt-line').length > 1) event.target.closest('.receipt-line').remove(); });
+		document.getElementById('receipt-form').addEventListener('submit', () => {
+			lines.querySelectorAll('.receipt-line').forEach((line, index) => {
+				line.querySelectorAll('[name]').forEach(input => input.name = input.name.replace(/Lines\[\d+\]/, `Lines[${index}]`));
+			});
+		});
+	</script>
+}
