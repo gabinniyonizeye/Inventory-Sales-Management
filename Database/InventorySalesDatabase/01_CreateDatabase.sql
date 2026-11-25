@@ -1,8 +1,10 @@
-﻿/* Run once in SSMS against master. Do not rerun on a database containing data. */
+/* Run once in SSMS against master. Do not rerun on a database containing data. */
 IF DB_ID(N'InventorySalesDB') IS NULL CREATE DATABASE InventorySalesDB;
 GO
 USE InventorySalesDB;
 GO
+SET QUOTED_IDENTIFIER ON;
+SET ANSI_NULLS ON;
 SET XACT_ABORT ON;
 GO
 CREATE TABLE dbo.Users (UserId int IDENTITY(1,1) NOT NULL PRIMARY KEY, FullName nvarchar(150) NOT NULL, UserName nvarchar(100) NOT NULL UNIQUE, PasswordHash nvarchar(500) NOT NULL, Role nvarchar(20) NOT NULL CHECK(Role IN (N'Administrator',N'Sales Staff')), IsActive bit NOT NULL DEFAULT 1, CreatedAt datetime2 NOT NULL DEFAULT GETDATE());
@@ -18,4 +20,5 @@ CREATE TABLE dbo.SaleItemBatches (SaleItemBatchId int IDENTITY PRIMARY KEY, Sale
 CREATE INDEX IX_StockBatches_Product_Expiry ON dbo.StockBatches(ProductId,ExpiryDate) INCLUDE(QuantityRemaining);
 CREATE INDEX IX_Sales_Date ON dbo.Sales(SaleDate);
 GO
+
 

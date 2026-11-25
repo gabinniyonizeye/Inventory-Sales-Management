@@ -1,4 +1,7 @@
-USE InventorySalesDB;
+﻿USE InventorySalesDB;
+GO
+SET QUOTED_IDENTIFIER ON;
+SET ANSI_NULLS ON;
 GO
 CREATE OR ALTER PROCEDURE dbo.User_GetByUsername @UserName nvarchar(100) AS
 BEGIN SET NOCOUNT ON; SELECT UserId, FullName, UserName, PasswordHash, Role, IsActive FROM dbo.Users WHERE UserName=@UserName; END;
