@@ -24,9 +24,12 @@
     <a asp-page="./Index" class="btn btn-link">Clear</a>
 </form>
 
+@if (User.IsInRole("Administrator"))
+{
 <p>
     <a asp-page="Create" class="btn btn-primary">Create New Product</a>
 </p>
+}
 
 <table class="table table-striped table-bordered">
     <thead>
@@ -67,15 +70,17 @@
                     }
                 </td>
                 <td>
-                    <a asp-page="./Edit" asp-route-id="@item.ProductId" class="btn btn-sm btn-warning">Edit</a>
+                    @if (User.IsInRole("Administrator")) { <a asp-page="./Edit" asp-route-id="@item.ProductId" class="btn btn-sm btn-warning">Edit</a> }
                     <a asp-page="./Details" asp-route-id="@item.ProductId" class="btn btn-sm btn-info">Details</a>
 
                     <!-- WHY: Deactivation form to preserve historical records as required -->
-                    <form method="post" asp-page-handler="ToggleStatus" asp-route-id="@item.ProductId" style="display:inline;">
+                    @if (User.IsInRole("Administrator")) {
+<form method="post" asp-page-handler="ToggleStatus" asp-route-id="@item.ProductId" style="display:inline;">
                         <button type="submit" class="btn btn-sm @(item.IsActive ? "btn-secondary" : "btn-success")">
                             @(item.IsActive ? "Deactivate" : "Activate")
                         </button>
                     </form>
+                    }
                 </td>
             </tr>
         }

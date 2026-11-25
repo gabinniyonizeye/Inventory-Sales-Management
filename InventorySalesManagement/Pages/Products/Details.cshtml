@@ -51,6 +51,6 @@
     </div>
 </div>
 <div>
-    <a asp-page="./Edit" asp-route-id="@Model.Product.ProductId" class="btn btn-warning">Edit</a>
+    @if (User.IsInRole("Administrator")) { <a asp-page="./Edit" asp-route-id="@Model.Product.ProductId" class="btn btn-warning">Edit</a> }
     <a asp-page="./Index" class="btn btn-secondary">Back to List</a>
 </div>

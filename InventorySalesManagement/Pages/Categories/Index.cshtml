@@ -12,10 +12,13 @@
     <div class="alert alert-success">@TempData["SuccessMessage"]</div>
 }
 
+@if (User.IsInRole("Administrator"))
+{
 <p>
     <!-- WHY: The asp-page tag helper generates a link to the Create page -->
     <a asp-page="Create" class="btn btn-primary">Create New Category</a>
 </p>
+}
 
 <table class="table table-striped table-bordered">
     <thead>
@@ -45,6 +48,8 @@
                     }
                 </td>
                 <td>
+                    @if (User.IsInRole("Administrator"))
+                    {
                     <!-- WHY: Links to the Edit page, passing the specific CategoryId -->
                     <a asp-page="./Edit" asp-route-id="@item.CategoryId" class="btn btn-sm btn-warning">Edit</a>
 
@@ -54,6 +59,7 @@
                             @(item.IsActive ? "Deactivate" : "Activate")
                         </button>
                     </form>
+                    }
                 </td>
             </tr>
         }

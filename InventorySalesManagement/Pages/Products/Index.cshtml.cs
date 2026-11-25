@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Data.SqlClient;
@@ -89,6 +89,7 @@ namespace InventorySalesManagement.Pages.Products
         // WHY: This handles the Activate/Deactivate button. We don't delete products to preserve historical records.
         public async Task<IActionResult> OnPostToggleStatusAsync(int id)
         {
+            if (!User.IsInRole("Administrator")) return Forbid();
             string connectionString = _configuration.GetConnectionString("DefaultConnection")!;
             Product? product = null;
 

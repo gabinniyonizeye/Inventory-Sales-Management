@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Data.SqlClient;
 using InventorySalesManagement.Models;
@@ -49,6 +49,7 @@ namespace InventorySalesManagement.Pages.Categories
         // WHY: When you click "Deactivate", this method flips the boolean in the database
         public async Task<IActionResult> OnPostToggleStatusAsync(int id)
         {
+            if (!User.IsInRole("Administrator")) return Forbid();
             string connectionString = _configuration.GetConnectionString("DefaultConnection")!;
             Category? category = null;
 
