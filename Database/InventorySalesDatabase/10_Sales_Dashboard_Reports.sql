@@ -1,4 +1,4 @@
-/* 10_Sales_Dashboard_Reports.sql
+﻿/* 10_Sales_Dashboard_Reports.sql
    Owner: Oscar - sales, dashboard alerts and reports.
    Run in SSMS against InventorySalesDB AFTER scripts 01, 02, 05, 07, 08 and 09.
    Safe to re-run (uses CREATE OR ALTER). */
@@ -147,7 +147,7 @@ BEGIN
 END
 GO
 
-CREATE OR ALTER PROCEDURE dbo.usp_Dashboard_Alerts @NearExpiryDays int = 30
+CREATE OR ALTER PROCEDURE dbo.usp_Dashboard_Alerts @NearExpiryDays int = 7
 AS
 BEGIN
     SET NOCOUNT ON;

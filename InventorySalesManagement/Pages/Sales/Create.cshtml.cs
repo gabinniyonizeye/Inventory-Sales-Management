@@ -1,4 +1,4 @@
-using System.Data;
+﻿using System.Data;
 using InventorySalesManagement.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -37,13 +37,27 @@ public class CreateModel : PageModel
 
     public IActionResult OnPost()
     {
-        var items = (Items ?? new()).Where(i => i.ProductId > 0 && i.Quantity > 0).ToList();
-        if (items.Count == 0)
+        if (Items == null || Items.Count == 0)
         {
-            ModelState.AddModelError("", "Add at least one product with a quantity greater than zero.");
+            ModelState.AddModelError("", "Add at least one product to the sale.");
+        }
+        else
+        {
+            for (int i = 0; i < Items.Count; i++)
+            {
+                if (Items[i].ProductId <= 0)
+                    ModelState.AddModelError("", $"Select a product for item {i + 1}.");
+                if (Items[i].Quantity <= 0)
+                    ModelState.AddModelError("", $"Enter a quantity greater than zero for item {i + 1}.");
+            }
+        }
+
+        if (!ModelState.IsValid)
+        {
             LoadProducts();
             return Page();
         }
+        var items = Items!;
 
         var userId = Db.CurrentUserId(User, _cs);
         if (userId is null)

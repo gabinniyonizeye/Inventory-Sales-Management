@@ -1,4 +1,4 @@
-@page
+﻿@page
 @model InventorySalesManagement.Pages.Sales.CreateModel
 @{
     ViewData["Title"] = "New Sale";
@@ -93,11 +93,9 @@
         body.querySelectorAll('tr').forEach(function (tr) {
             var sel = tr.querySelector('.prod');
             var qty = tr.querySelector('.qty');
-            if (sel.value) {
-                sel.name = 'Items[' + i + '].ProductId';
-                qty.name = 'Items[' + i + '].Quantity';
-                i++;
-            }
+            sel.name = 'Items[' + i + '].ProductId';
+            qty.name = 'Items[' + i + '].Quantity';
+            i++;
         });
     });
 
