@@ -1,0 +1,87 @@
+@page
+@model InventorySalesManagement.Pages.Dashboard.IndexModel
+@{ ViewData["Title"] = "Dashboard"; }
+
+<h2>Dashboard</h2>
+<p class="text-muted">Last updated: <span id="updatedAt">loading...</span></p>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card p-3"><div>Today's sales</div><h3 id="salesCount">0</h3></div>
+    </div>
+    <div class="col-md-3">
+        <div class="card p-3"><div>Today's total</div><h3 id="salesTotal">0.00</h3></div>
+    </div>
+</div>
+
+<h4 class="text-warning">Low stock</h4>
+<div id="lowStock"></div>
+
+<h4 class="text-warning mt-4">Near-expiry batches</h4>
+<div id="nearExpiry"></div>
+
+<h4 class="text-danger mt-4">Expired batches (stock remaining)</h4>
+<div id="expired"></div>
+
+<p class="mt-4">
+    <a href="/Sales/Create" class="btn btn-primary">New sale</a>
+    <a href="/Sales" class="btn btn-secondary">Sales history</a>
+    <a href="/Reports/Sales" class="btn btn-secondary">Sales report</a>
+    <a href="/Reports/Inventory" class="btn btn-secondary">Inventory report</a>
+</p>
+
+<script>
+(function () {
+    function esc(s) {
+        return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+        });
+    }
+
+    function render(id, rows, cols) {
+        var el = document.getElementById(id);
+        if (!rows || rows.length === 0) {
+            el.innerHTML = '<p class="text-success">Nothing to report.</p>';
+            return;
+        }
+        var html = '<table class="table table-sm"><thead><tr>';
+        cols.forEach(function (c) { html += '<th>' + esc(c[1]) + '</th>'; });
+        html += '</tr></thead><tbody>';
+        rows.forEach(function (r) {
+            html += '<tr>';
+            cols.forEach(function (c) {
+                var v = r[c[0]];
+                if (c[0] === 'ExpiryDate' && v) v = String(v).substring(0, 10);
+                html += '<td>' + esc(v) + '</td>';
+            });
+            html += '</tr>';
+        });
+        el.innerHTML = html + '</tbody></table>';
+    }
+
+    function load() {
+        fetch('/Dashboard?handler=Data', { credentials: 'same-origin' })
+            .then(function (res) { if (!res.ok) throw new Error(); return res.json(); })
+            .then(function (d) {
+                document.getElementById('salesCount').textContent = d.summary ? d.summary.SalesCount : 0;
+                document.getElementById('salesTotal').textContent =
+                    d.summary ? Number(d.summary.TotalAmount).toFixed(2) : '0.00';
+                render('lowStock', d.lowStock,
+                    [['ProductName', 'Product'], ['Available', 'Available'], ['ReorderLevel', 'Reorder level']]);
+                render('nearExpiry', d.nearExpiry,
+                    [['ProductName', 'Product'], ['StockBatchId', 'Batch'], ['QuantityRemaining', 'Remaining'],
+                     ['ExpiryDate', 'Expires'], ['DaysLeft', 'Days left']]);
+                render('expired', d.expired,
+                    [['ProductName', 'Product'], ['StockBatchId', 'Batch'], ['QuantityRemaining', 'Remaining'],
+                     ['ExpiryDate', 'Expired on'], ['DaysExpired', 'Days ago']]);
+                document.getElementById('updatedAt').textContent = new Date().toLocaleTimeString();
+            })
+            .catch(function () {
+                document.getElementById('updatedAt').textContent = 'update failed - will retry';
+            });
+    }
+
+    load();                       // check when the dashboard opens
+    setInterval(load, 30000);     // refresh while it stays open
+})();
+</script>

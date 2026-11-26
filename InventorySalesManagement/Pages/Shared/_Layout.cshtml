@@ -27,6 +27,13 @@
                         @if (User.Identity?.IsAuthenticated == true)
                         {
                             <li class="nav-item"><a class="nav-link" asp-page="/Batches/Index">Stock</a></li>
+
+                            <li class="nav-item"><a class="nav-link" asp-page="/Sales/Create">New sale</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-page="/Sales/Index">Sales history</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-page="/Dashboard/Index">Alerts</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-page="/Reports/Sales">Sales report</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-page="/Reports/Inventory">Inventory report</a></li>
+
                             @if (User.IsInRole("Administrator"))
                             {
                                 <li class="nav-item"><a class="nav-link" asp-page="/Suppliers/Index">Suppliers</a></li>

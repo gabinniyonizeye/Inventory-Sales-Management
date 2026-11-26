@@ -1,0 +1,44 @@
+@page
+@model InventorySalesManagement.Pages.Reports.InventoryModel
+@using System.Data
+@{ ViewData["Title"] = "Inventory report"; }
+
+<h2>Inventory report</h2>
+<p class="text-muted">Available quantity excludes expired batches. Date: @DateTime.Today.ToString("yyyy-MM-dd")</p>
+
+<p class="d-print-none">
+    <a class="btn btn-outline-primary btn-sm" href="/Reports/Inventory?handler=Download">Download CSV</a>
+    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="window.print()">Print / Save as PDF</button>
+</p>
+
+@if (Model.Stock.Rows.Count == 0)
+{
+    <p class="text-muted">No active products.</p>
+}
+else
+{
+    <table class="table table-sm table-striped">
+        <thead>
+            <tr>
+                <th>Product</th><th>Category</th><th>Unit</th>
+                <th>Available</th><th>Reorder level</th><th>Expired qty</th><th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (DataRow r in Model.Stock.Rows)
+        {
+            var status = (string)r["StockStatus"];
+            var css = status == "OK" ? "text-success" : status == "Low stock" ? "text-warning" : "text-danger";
+            <tr>
+                <td>@r["ProductName"]</td>
+                <td>@r["CategoryName"]</td>
+                <td>@r["Unit"]</td>
+                <td>@r["Available"]</td>
+                <td>@r["ReorderLevel"]</td>
+                <td>@r["ExpiredQuantity"]</td>
+                <td class="@css"><strong>@status</strong></td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
