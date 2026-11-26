@@ -1,4 +1,4 @@
-using System.Data;
+﻿using System.Data;
 using InventorySalesManagement.Infrastructure;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Data.SqlClient;
@@ -16,6 +16,13 @@ namespace InventorySalesManagement.Pages
         public int ExpiringCount { get; set; }
         public int ExpiredCount { get; set; }
         public int ProductCount { get; set; }
+        public decimal MonthRevenue { get; set; }
+        public decimal MonthStockCost { get; set; }
+        public decimal MonthExpiryCost { get; set; }
+        public int MissingCostItems { get; set; }
+        public DateTime FinancialStart { get; set; }
+        public DateTime FinancialAsOf { get; set; }
+
         public string ErrorMessage { get; set; } = "";
         public List<DailySales> SalesDays { get; set; } = new List<DailySales>();
         public DataTable LowStock { get; set; } = new DataTable();
@@ -49,6 +56,18 @@ namespace InventorySalesManagement.Pages
                 LowStockCount = LowStock.Rows.Count;
                 ExpiringCount = NearExpiry.Rows.Count;
                 ExpiredCount = Expired.Rows.Count;
+
+                if (User.IsInRole("Administrator"))
+                {
+                    DataSet financial = Db.Query(connectionString, "dbo.usp_Dashboard_FinancialSummary");
+                    DataRow figures = financial.Tables[0].Rows[0];
+                    MonthRevenue = Convert.ToDecimal(figures["SalesValue"]);
+                    MonthStockCost = Convert.ToDecimal(figures["SoldStockCost"]);
+                    MonthExpiryCost = Convert.ToDecimal(figures["EstimatedExpiryCost"]);
+                    MissingCostItems = Convert.ToInt32(figures["MissingCostItems"]);
+                    FinancialStart = Convert.ToDateTime(figures["PeriodStart"]);
+                    FinancialAsOf = Convert.ToDateTime(figures["AsOfDate"]);
+                }
 
                 DataSet inventory = Db.Query(connectionString, "dbo.usp_Report_Inventory");
                 ProductCount = inventory.Tables[0].Rows.Count;

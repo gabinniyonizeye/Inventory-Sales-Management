@@ -1,4 +1,4 @@
-:root { --bs-primary: #244fc0; --bs-primary-rgb: 36, 79, 192; }
+﻿:root { --bs-primary: #244fc0; --bs-primary-rgb: 36, 79, 192; }
 body { background: #f5f7fb; color: #17233c; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
 .app-header { background: #fff; border-bottom: 1px solid #e5eaf2; }
 .app-brand { color: #17233c; font-weight: 750; font-size: 1.05rem; display: flex; align-items: center; gap: .65rem; margin-right: 2rem; }
@@ -37,3 +37,10 @@ body { background: #f5f7fb; color: #17233c; font-family: system-ui, -apple-syste
 .stock-stat { font-size: .88rem; color: #75839a; } .stock-stat strong { color: #223454; }
 .form-control:focus, .form-select:focus { border-color: #86a7db; box-shadow: 0 0 0 .2rem rgba(36,79,192,.15); }
 @media (max-width: 991px) { .nav-account { padding: .75rem; } .navbar-collapse { padding-top: .8rem; } }
+
+.financial-label { color: #3657aa; background: #eef3ff; border-radius: 999px; padding: .3rem .65rem; font-size: .72rem; font-weight: 700; }
+.financial-metric { background: #f8fafd; border: 1px solid #edf1f6; border-radius: .75rem; padding: .85rem 1rem; height: 100%; }
+.financial-metric span { display: block; color: #6b7a90; font-size: .77rem; font-weight: 600; margin-bottom: .35rem; }
+.financial-metric strong { font-size: 1.2rem; overflow-wrap: anywhere; }
+.financial-result { background: #edf3ff; border-color: #dbe6ff; }
+.financial-note { color: #748297; font-size: .78rem; line-height: 1.5; margin-top: 1rem; }

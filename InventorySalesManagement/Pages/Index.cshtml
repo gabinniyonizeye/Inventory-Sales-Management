@@ -1,4 +1,4 @@
-@page
+﻿@page
 @model IndexModel
 @using System.Data
 @using System.Globalization
@@ -7,6 +7,7 @@
     bool admin = User.IsInRole("Administrator");
     decimal maxSale = Model.SalesDays.Count > 0 ? Model.SalesDays.Max(day => day.Amount) : 0;
     int totalAlerts = Model.LowStockCount + Model.ExpiringCount + Model.ExpiredCount;
+    decimal financialResult = Model.MonthRevenue - Model.MonthStockCost - Model.MonthExpiryCost;
 }
 <div class="dashboard-heading d-flex flex-wrap align-items-end justify-content-between gap-3 mb-4">
     <div><div class="eyebrow">@DateTime.Today.ToString("dddd, dd MMMM yyyy")</div><h1 class="dashboard-title">@(admin ? "Business overview" : "Sales workspace")</h1><p class="text-secondary mb-0">@(admin ? "See sales and stock that need your attention." : "Record a sale and keep an eye on available stock.")</p></div>
@@ -24,6 +25,23 @@ else
         <div class="col-6 col-xl-3"><div class="metric-card"><span class="metric-label">Low-stock products</span><strong>@Model.LowStockCount</strong><small>At or below reorder level</small></div></div>
         <div class="col-6 col-xl-3"><div class="metric-card"><span class="metric-label">Expiry alerts</span><strong>@(Model.ExpiringCount + Model.ExpiredCount)</strong><small>@Model.ExpiringCount within 7 days · @Model.ExpiredCount expired</small></div></div>
     </div>
+    @if (admin)
+    {
+        <section class="dashboard-card financial-overview mb-4" aria-labelledby="financial-heading">
+            <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+                <div><h2 class="section-title" id="financial-heading">Profit and stock loss estimate</h2><p class="section-subtitle mb-0">@Model.FinancialStart.ToString("dd MMM") – @Model.FinancialAsOf.ToString("dd MMM yyyy")</p></div>
+                <span class="financial-label">Month to date</span>
+            </div>
+            <div class="row g-3">
+                <div class="col-6 col-xl-3"><div class="financial-metric"><span>Sales revenue</span><strong>@Model.MonthRevenue.ToString("N2")</strong></div></div>
+                <div class="col-6 col-xl-3"><div class="financial-metric"><span>Cost of stock sold</span><strong>@if (Model.MissingCostItems > 0) { <text>Incomplete</text> } else { @Model.MonthStockCost.ToString("N2") }</strong></div></div>
+                <div class="col-6 col-xl-3"><div class="financial-metric"><span>Estimated expiry loss</span><strong class="text-danger">@Model.MonthExpiryCost.ToString("N2")</strong></div></div>
+                <div class="col-6 col-xl-3"><div class="financial-metric financial-result"><span>After stock and expiry</span><strong>@if (Model.MissingCostItems > 0) { <text>Unavailable</text> } else { @financialResult.ToString("N2") }</strong>@if (Model.MissingCostItems == 0) { <small class="d-block text-secondary">@(financialResult < 0 ? "Estimated loss" : financialResult > 0 ? "Estimated surplus" : "Break even")</small> }</div></div>
+            </div>
+            @if (Model.MissingCostItems > 0) { <p class="financial-note text-danger mb-1">@Model.MissingCostItems sale item(s) have incomplete batch cost records. Complete them to calculate this estimate.</p> }
+            <p class="financial-note mb-0">Estimate, not net profit: excludes rent, wages, taxes and other expenses. Expiry loss uses the purchase cost of stock still recorded on batches that expired this month; it may change if stock records are corrected.</p>
+        </section>
+    }
     <div class="row g-4">
         <div class="col-lg-8">
             <section class="dashboard-card h-100">
