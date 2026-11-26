@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -7,57 +7,57 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
-<body class="bg-light">
-    <header>
-        <nav class="navbar navbar-expand-lg bg-white border-bottom py-3">
-            <div class="container">
-                <a class="navbar-brand fw-bold text-primary" asp-page="/Index">Inventory &amp; Sales</a>
-
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavigation" aria-controls="mainNavigation" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
+<body>
+<header class="app-header">
+    <nav class="navbar navbar-expand-lg navbar-light py-3">
+        <div class="container-xxl px-lg-4">
+            <a class="navbar-brand app-brand" asp-page="/Index"><span class="brand-mark">IS</span><span>Inventory<span class="brand-sub"> &amp; Sales</span></span></a>
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavigation" aria-controls="mainNavigation" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="mainNavigation">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item"><a class="nav-link" asp-page="/Index">Home</a></li>
-
-                        <li class="nav-item"><a class="nav-link" asp-page="/Products/Index">Products</a></li>
-                        <li class="nav-item"><a class="nav-link" asp-page="/Categories/Index">Categories</a></li>
-
-                        @if (User.Identity?.IsAuthenticated == true)
-                        {
-                            <li class="nav-item"><a class="nav-link" asp-page="/Batches/Index">Stock</a></li>
-
-                            <li class="nav-item"><a class="nav-link" asp-page="/Sales/Create">New sale</a></li>
-                            <li class="nav-item"><a class="nav-link" asp-page="/Sales/Index">Sales history</a></li>
-                            <li class="nav-item"><a class="nav-link" asp-page="/Dashboard/Index">Alerts</a></li>
-                            <li class="nav-item"><a class="nav-link" asp-page="/Reports/Sales">Sales report</a></li>
-                            <li class="nav-item"><a class="nav-link" asp-page="/Reports/Inventory">Inventory report</a></li>
-
-                            @if (User.IsInRole("Administrator"))
-                            {
-                                <li class="nav-item"><a class="nav-link" asp-page="/Suppliers/Index">Suppliers</a></li>
-                                <li class="nav-item"><a class="nav-link" asp-page="/Receipts/Index">Stock receipts</a></li>
-                                <li class="nav-item"><a class="nav-link" asp-page="/Users/Index">Users</a></li>
-                            }
-                        }
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-lg-1">
+                        <li class="nav-item"><a class="nav-link" asp-page="/Index">Overview</a></li>
+                        <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Sales</a><ul class="dropdown-menu"><li><a class="dropdown-item" asp-page="/Sales/Create">New sale</a></li><li><a class="dropdown-item" asp-page="/Sales/Index">Sales history</a></li></ul></li>
+                        <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Inventory</a><ul class="dropdown-menu"><li><a class="dropdown-item" asp-page="/Products/Index">Products</a></li><li><a class="dropdown-item" asp-page="/Categories/Index">Categories</a></li><li><a class="dropdown-item" asp-page="/Batches/Index">Stock batches</a></li>@if (User.IsInRole("Administrator")) { <li><hr class="dropdown-divider" /></li><li><a class="dropdown-item" asp-page="/Suppliers/Index">Suppliers</a></li><li><a class="dropdown-item" asp-page="/Receipts/Index">Stock receipts</a></li> }</ul></li>
+                        <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Reports</a><ul class="dropdown-menu"><li><a class="dropdown-item" asp-page="/Reports/Sales">Sales report</a></li><li><a class="dropdown-item" asp-page="/Reports/Inventory">Inventory report</a></li></ul></li>
+                        <li class="nav-item"><a class="nav-link" asp-page="/Dashboard/Index">Alerts <span id="alert-count" class="badge text-bg-danger" hidden></span></a></li>
+                        @if (User.IsInRole("Administrator")) { <li class="nav-item"><a class="nav-link" asp-page="/Users/Index">Users</a></li> }
                     </ul>
-
-                    @if (User.Identity?.IsAuthenticated == true)
-                    {
-                        <div class="d-flex flex-wrap align-items-center gap-3">
-                            <span class="small text-secondary">Signed in as <strong class="text-dark">@User.Identity.Name</strong></span>
-                            <form method="post" asp-page="/Account/Logout"><button type="submit" class="btn btn-outline-secondary btn-sm">Sign out</button></form>
-                        </div>
-                    }
+                    <div class="d-flex flex-wrap align-items-center gap-3 nav-account"><span class="small text-secondary">@User.Identity.Name<br /><span class="account-role">@(User.IsInRole("Administrator") ? "Administrator" : "Sales staff")</span></span><form method="post" asp-page="/Account/Logout"><button type="submit" class="btn btn-outline-secondary btn-sm">Sign out</button></form></div>
                 </div>
-            </div>
-        </nav>
-    </header>
-    <main class="container py-4 py-lg-5">@RenderBody()</main>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+            }
+        </div>
+    </nav>
+</header>
+<main class="container-xxl px-lg-4 py-4 py-lg-5">@RenderBody()</main>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+@if (User.Identity?.IsAuthenticated == true)
+{
+    <script>
+        function updateAlertCount() {
+            fetch('/Dashboard?handler=Data', { credentials: 'same-origin' })
+                .then(function (response) { if (!response.ok) throw new Error(); return response.json(); })
+                .then(function (data) {
+                    var count = data.lowStock.length + data.nearExpiry.length + data.expired.length;
+                    var badge = document.getElementById('alert-count');
+                    badge.textContent = count;
+                    badge.hidden = count === 0;
+                    badge.title = count + ' stock and expiry alerts';
+                })
+                .catch(function () {
+                    var badge = document.getElementById('alert-count');
+                    badge.textContent = '!';
+                    badge.hidden = false;
+                    badge.title = 'Alerts could not be updated';
+                });
+        }
+        updateAlertCount();
+        setInterval(updateAlertCount, 30000);
+    </script>
+}
+@await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
