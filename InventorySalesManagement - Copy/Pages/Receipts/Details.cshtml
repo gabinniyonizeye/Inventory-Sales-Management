@@ -1,0 +1,10 @@
+﻿@page "{id:int}"
+@model InventorySalesManagement.Pages.Receipts.DetailsModel
+@{ ViewData["Title"] = "Receipt Details"; }
+<h1>Receipt #@Model.Receipt.StockReceiptId</h1>
+@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+<div class="card mb-4"><div class="card-body row"><div class="col-md-4"><strong>Supplier</strong><br />@Model.Receipt.SupplierName</div><div class="col-md-4"><strong>Received</strong><br />@Model.Receipt.ReceivedAt.ToString("g")</div><div class="col-md-4"><strong>Recorded by</strong><br />@Model.Receipt.ReceivedByName</div><div class="col-md-4"><strong>Notes</strong><br />@Model.Receipt.Notes</div></div></div>
+<table class="table table-striped table-bordered"><thead><tr><th>Product</th><th>Quantity received</th><th>Quantity remaining</th><th>Purchase cost</th><th>Expiry date</th></tr></thead><tbody>
+@foreach (var batch in Model.Receipt.Batches) { <tr><td>@batch.ProductName</td><td>@batch.QuantityReceived</td><td>@batch.QuantityRemaining</td><td>@batch.UnitCost.ToString("C")</td><td>@(batch.ExpiryDate?.ToString("d") ?? "No expiry")</td></tr> }
+</tbody></table>
+<p><a asp-page="Index" class="btn btn-link">Back to receipts</a></p>

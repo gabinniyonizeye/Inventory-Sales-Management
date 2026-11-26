@@ -1,0 +1,106 @@
+@page
+@model InventorySalesManagement.Pages.Sales.CreateModel
+@{
+    ViewData["Title"] = "New Sale";
+    var productsJson = System.Text.Json.JsonSerializer.Serialize(Model.Products);
+}
+
+<h2>New Sale</h2>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        @foreach (var e in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <div>@e.ErrorMessage</div>
+        }
+    </div>
+}
+
+<form method="post" id="saleForm">
+    @Html.AntiForgeryToken()
+
+    <table class="table" id="itemsTable">
+        <thead>
+            <tr>
+                <th style="width:40%">Product</th>
+                <th>Available</th>
+                <th>Price</th>
+                <th style="width:15%">Quantity</th>
+                <th>Line total</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <button type="button" class="btn btn-secondary" id="addRow">Add item</button>
+
+    <div class="mt-3">
+        <h4>Total: <span id="grandTotal">0.00</span></h4>
+    </div>
+
+    <button type="submit" class="btn btn-primary" id="SubmitBtn">Save sale</button>
+    <a class="btn btn-link" href="/Sales">Sales history</a>
+</form>
+
+<script>
+(function () {
+    var products = @Html.Raw(productsJson);
+    var body = document.querySelector('#itemsTable tbody');
+
+    function addRow() {
+        var tr = document.createElement('tr');
+        tr.innerHTML =
+            '<td><select class="form-control prod"></select></td>' +
+            '<td class="avail">-</td>' +
+            '<td class="price">-</td>' +
+            '<td><input type="number" min="1" value="1" class="form-control qty" /></td>' +
+            '<td class="line">0.00</td>' +
+            '<td><button type="button" class="btn btn-sm btn-danger rm">X</button></td>';
+
+        var select = tr.querySelector('.prod');
+        select.add(new Option('-- select product --', ''));
+        products.forEach(function (p) {
+            select.add(new Option(p.ProductName + ' (' + p.Unit + ')', p.ProductId));
+        });
+
+        select.addEventListener('change', recalc);
+        tr.querySelector('.qty').addEventListener('input', recalc);
+        tr.querySelector('.rm').addEventListener('click', function () { tr.remove(); recalc(); });
+        body.appendChild(tr);
+    }
+
+    function recalc() {
+        var total = 0;
+        body.querySelectorAll('tr').forEach(function (tr) {
+            var id = tr.querySelector('.prod').value;
+            var p = products.find(function (x) { return String(x.ProductId) === id; });
+            var q = parseInt(tr.querySelector('.qty').value, 10) || 0;
+            var line = p ? q * p.SellingPrice : 0;
+            tr.querySelector('.avail').textContent = p ? p.Available : '-';
+            tr.querySelector('.price').textContent = p ? p.SellingPrice.toFixed(2) : '-';
+            tr.querySelector('.line').textContent = line.toFixed(2);
+            total += line;
+        });
+        document.getElementById('grandTotal').textContent = total.toFixed(2);
+    }
+
+    document.getElementById('addRow').addEventListener('click', addRow);
+
+    document.getElementById('saleForm').addEventListener('submit', function () {
+        var i = 0;
+        body.querySelectorAll('tr').forEach(function (tr) {
+            var sel = tr.querySelector('.prod');
+            var qty = tr.querySelector('.qty');
+            if (sel.value) {
+                sel.name = 'Items[' + i + '].ProductId';
+                qty.name = 'Items[' + i + '].Quantity';
+                i++;
+            }
+        });
+    });
+
+    addRow();
+})();
+</script>

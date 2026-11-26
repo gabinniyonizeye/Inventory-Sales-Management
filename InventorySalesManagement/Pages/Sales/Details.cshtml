@@ -1,0 +1,43 @@
+@page "{id:int}"
+@model InventorySalesManagement.Pages.Sales.DetailsModel
+@using System.Data
+@{ ViewData["Title"] = "Sale details"; }
+
+<h2>Sale #@Model.Header!["SaleId"]</h2>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<p>
+    <strong>Date:</strong> @(((DateTime)Model.Header["SaleDate"]).ToString("yyyy-MM-dd HH:mm"))<br />
+    <strong>Sold by:</strong> @Model.Header["SoldBy"]<br />
+    <strong>Total:</strong> @(((decimal)Model.Header["TotalAmount"]).ToString("N2"))
+</p>
+
+<table class="table table-sm table-striped">
+    <thead>
+        <tr>
+            <th>Product</th><th>Qty</th><th class="text-end">Unit price</th><th class="text-end">Line total</th>
+            <th>Batch</th><th>Qty from batch</th><th>Batch expiry</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (DataRow r in Model.Lines.Rows)
+    {
+        <tr>
+            <td>@r["ProductName"]</td>
+            <td>@r["Quantity"]</td>
+            <td class="text-end">@(((decimal)r["UnitPrice"]).ToString("N2"))</td>
+            <td class="text-end">@(((decimal)r["LineTotal"]).ToString("N2"))</td>
+            <td>@(r["StockBatchId"] is DBNull ? "-" : r["StockBatchId"])</td>
+            <td>@(r["QuantityUsed"] is DBNull ? "-" : r["QuantityUsed"])</td>
+            <td>@(r["ExpiryDate"] is DBNull ? "No expiry" : ((DateTime)r["ExpiryDate"]).ToString("yyyy-MM-dd"))</td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<a href="/Sales" class="btn btn-secondary">Back to history</a>
+<a href="/Sales/Create" class="btn btn-primary">New sale</a>

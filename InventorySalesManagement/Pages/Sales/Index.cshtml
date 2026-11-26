@@ -1,0 +1,48 @@
+@page
+@model InventorySalesManagement.Pages.Sales.IndexModel
+@using System.Data
+@{ ViewData["Title"] = "Sales history"; }
+
+<h2>Sales history</h2>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-auto">
+        <label class="form-label">From</label>
+        <input type="date" name="From" class="form-control" value="@(Model.From?.ToString("yyyy-MM-dd"))" />
+    </div>
+    <div class="col-auto">
+        <label class="form-label">To</label>
+        <input type="date" name="To" class="form-control" value="@(Model.To?.ToString("yyyy-MM-dd"))" />
+    </div>
+    <div class="col-auto align-self-end">
+        <button type="submit" class="btn btn-primary">Filter</button>
+        <a href="/Sales" class="btn btn-link">Clear</a>
+        <a href="/Sales/Create" class="btn btn-success">New sale</a>
+    </div>
+</form>
+
+@if (Model.Sales.Rows.Count == 0)
+{
+    <p class="text-muted">No sales found.</p>
+}
+else
+{
+    <table class="table table-sm table-striped">
+        <thead>
+            <tr><th>Sale #</th><th>Date</th><th>Sold by</th><th>Items</th><th class="text-end">Total</th><th></th></tr>
+        </thead>
+        <tbody>
+        @foreach (DataRow r in Model.Sales.Rows)
+        {
+            <tr>
+                <td>@r["SaleId"]</td>
+                <td>@(((DateTime)r["SaleDate"]).ToString("yyyy-MM-dd HH:mm"))</td>
+                <td>@r["SoldBy"]</td>
+                <td>@r["ItemCount"]</td>
+                <td class="text-end">@(((decimal)r["TotalAmount"]).ToString("N2"))</td>
+                <td><a href="/Sales/Details/@r["SaleId"]">Details</a></td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

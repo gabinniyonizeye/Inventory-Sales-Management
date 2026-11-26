@@ -1,0 +1,56 @@
+﻿@page
+@model InventorySalesManagement.Pages.Products.DetailsModel
+@{
+    ViewData["Title"] = "Product Details";
+}
+
+<h2>Product Details</h2>
+<hr />
+<div class="row">
+    <div class="col-md-8">
+        <dl class="row">
+            <dt class="col-sm-3">Product Name</dt>
+            <dd class="col-sm-9">@Model.Product.ProductName</dd>
+
+            <dt class="col-sm-3">Category</dt>
+            <dd class="col-sm-9">@Model.Product.CategoryName</dd>
+
+            <dt class="col-sm-3">Selling Price</dt>
+            <dd class="col-sm-9">@Model.Product.SellingPrice.ToString("C")</dd>
+
+            <dt class="col-sm-3">Unit</dt>
+            <dd class="col-sm-9">@Model.Product.Unit</dd>
+
+            <dt class="col-sm-3">Reorder Level</dt>
+            <dd class="col-sm-9">@Model.Product.ReorderLevel</dd>
+
+            <dt class="col-sm-3">Available Stock</dt>
+            <dd class="col-sm-9">
+                @Model.Product.AvailableQuantity @Model.Product.Unit
+
+                <!-- WHY: Show the Low Stock warning here too so the admin sees it immediately -->
+                @if (Model.Product.AvailableQuantity <= Model.Product.ReorderLevel)
+                {
+                    <span class="badge bg-danger">Low Stock</span>
+                }
+            </dd>
+
+            <dt class="col-sm-3">Status</dt>
+            <dd class="col-sm-9">
+                @if (Model.Product.IsActive)
+                {
+                    <span class="badge bg-success">Active</span>
+                }
+                else
+                {
+
+                    <span class="badge bg-secondary">Inactive</span>
+                }
+            </dd>
+        </dl>
+    </div>
+</div>
+<div>
+    @if (User.IsInRole("Administrator")) { <a asp-page="./Edit" asp-route-id="@Model.Product.ProductId" class="btn btn-warning">Edit</a> }
+    <a asp-page="./Index" class="btn btn-secondary">Back to List</a>
+</div>

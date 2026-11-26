@@ -1,0 +1,53 @@
+﻿@page
+@model InventorySalesManagement.Pages.Products.CreateModel
+@{
+    ViewData["Title"] = "Create Product";
+}
+
+<h2>Create Product</h2>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Product.ProductName" class="control-label">Product Name</label>
+                <input asp-for="Product.ProductName" class="form-control" />
+                <span asp-validation-for="Product.ProductName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Product.CategoryId" class="control-label">Category</label>
+                <!-- Single quotes used for the select list -->
+                <select asp-for="Product.CategoryId" class="form-control" asp-items='@(ViewData["CategoryId"] as SelectList)'>
+                    <option value="">-- Select Category --</option>
+                </select>
+                <span asp-validation-for="Product.CategoryId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Product.SellingPrice" class="control-label">Selling Price</label>
+                <input asp-for="Product.SellingPrice" class="form-control" type="number" step="0.01" />
+                <span asp-validation-for="Product.SellingPrice" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Product.Unit" class="control-label">Unit</label>
+                <input asp-for="Product.Unit" class="form-control" placeholder="e.g., kg, pcs, box" />
+                <span asp-validation-for="Product.Unit" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Product.ReorderLevel" class="control-label">Reorder Level</label>
+                <input asp-for="Product.ReorderLevel" class="form-control" type="number" />
+                <span asp-validation-for="Product.ReorderLevel" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+                <a asp-page="Index" class="btn btn-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
